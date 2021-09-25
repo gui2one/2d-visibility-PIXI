@@ -1,3 +1,7 @@
+# Modifications for PIXIjs
+
+I forked this nice project to make it draw into a PIXI Container.
+
 # 2D Visibility Algorithm Demo
 
 Fork of https://github.com/Silverwolf90/2d-visibility

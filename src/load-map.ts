@@ -37,10 +37,10 @@ export const processSegments = (lightSource: Point, segments: Segment[]) => {
     endPoints.push(segment.p1, segment.p2);
   }
   return endPoints;
-  // return segments;
+
 };
 
-export function loadMap(room: Rectangle, blocks: Rectangle[], walls: Segment[], lightSource: Point): Segment[] {
+export function loadMap(room: Rectangle, blocks: Rectangle[], walls: Segment[]): Segment[] {
   const segments: Segment[] = [];
   for (const segment of room.getCornerSegments()) {
     segments.push(segment);
@@ -55,9 +55,5 @@ export function loadMap(room: Rectangle, blocks: Rectangle[], walls: Segment[], 
   }
 
   return segments;
-  // const endPoints: EndPoint[] = [];
-  // for (const segment of processSegments(lightSource, segments)) {
-  //   endPoints.push(segment.p1, segment.p2);
-  // }
-  // return endPoints;
+
 }

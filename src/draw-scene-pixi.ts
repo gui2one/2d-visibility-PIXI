@@ -6,6 +6,11 @@ import { Segment } from './segment';
 
 export const drawScenePixi = (stage: Container, lightSource: Point, room: Rectangle, blocks: Rectangle[], walls: Segment[]) => {
 
+    for (let child of stage.children) {
+        child.destroy();
+    }
+
+    // stage.clear();
     let g_walls = new Graphics();
     g_walls.lineStyle(2, 0x000000, 1.0);
     g_walls.drawRect(room.x, room.y, room.width, room.height)
@@ -28,9 +33,9 @@ export const drawScenePixi = (stage: Container, lightSource: Point, room: Rectan
 
 export const drawVisibilityTriangles = (graphic: Graphics, color: number, lightSource: Point, visibilityOutput: Point[][]) => {
     graphic.clear();
-    graphic.lineStyle(1, color, 1.0);
+    // graphic.lineStyle(1, color, 1.0);
     for (const points of visibilityOutput) {
-
+        graphic.beginFill(0x555555);
         graphic.moveTo(lightSource.x, lightSource.y);
         graphic.lineTo(points[0].x, points[0].y);
         graphic.lineTo(points[1].x, points[1].y);

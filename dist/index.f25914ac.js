@@ -465,53 +465,174 @@ var _pixiJs = require("pixi.js");
 var _styleScss = require("../style.scss");
 // Prepare canvas
 const canvas = document.getElementById('scene');
-// if (!canvas) {
-//   throw new Error('Could not get element');
-// }
-// const ctx = canvas.getContext('2d');
-// if (!ctx) {
-//   throw new Error('Could not get context');
-// }
-// const xOffset = 0.5;
-// const yOffset = 0.5;
-// ctx.translate(xOffset, yOffset);
 const app = new _pixiJs.Application({
     width: 800,
     height: 800,
-    backgroundColor: 16711680,
+    backgroundColor: 0,
     view: canvas,
     antialias: true
 });
 document.body.appendChild(app.view);
 // // Setup scene
-const room = new _rectangle.Rectangle(0, 0, 700, 500);
+const room = new _rectangle.Rectangle(-10, -10, window.innerWidth + 20, window.innerHeight + 20);
+// const walls = [
+//   new Segment(20, 20, 20, 120),
+//   new Segment(20, 20, 100, 20),
+//   new Segment(100, 20, 150, 100),
+//   new Segment(150, 100, 50, 100),
+// ];
 const walls = [
-    new _segment.Segment(20, 20, 20, 120),
-    new _segment.Segment(20, 20, 100, 20),
-    new _segment.Segment(100, 20, 150, 100),
-    new _segment.Segment(150, 100, 50, 100), 
+    new _segment.Segment(0, 132.101699829, 13.9535665512, 113.098945618),
+    new _segment.Segment(13.9535665512, 113.098945618, 20.8865890503, 112.653991699),
+    new _segment.Segment(20.8865890503, 112.653991699, 43.8088417053, 124.527664185),
+    new _segment.Segment(43.8088417053, 124.527664185, 55.6325454712, 125.286499023),
+    new _segment.Segment(55.6325454712, 125.286499023, 64.5194091797, 123.125564575),
+    new _segment.Segment(64.5194091797, 123.125564575, 69.609664917, 119.325698853),
+    new _segment.Segment(69.609664917, 119.325698853, 72.5407562256, 113.781234741),
+    new _segment.Segment(72.5407562256, 113.781234741, 72.4838256836, 102.514633179),
+    new _segment.Segment(72.4838256836, 102.514633179, 65.3330307007, 95.4263305664),
+    new _segment.Segment(65.3330307007, 95.4263305664, 24.9319553375, 79.8470153809),
+    new _segment.Segment(24.9319553375, 79.8470153809, 14.4418716431, 70.3700790405),
+    new _segment.Segment(14.4418716431, 70.3700790405, 8.91020298004, 59.8571624756),
+    new _segment.Segment(8.91020298004, 59.8571624756, 6.764793396, 45.9022064209),
+    new _segment.Segment(6.764793396, 45.9022064209, 8.35349559784, 32.7058868408),
+    new _segment.Segment(8.35349559784, 32.7058868408, 13.941192627, 20.5737304688),
+    new _segment.Segment(13.941192627, 20.5737304688, 23.1850852966, 10.54737854),
+    new _segment.Segment(23.1850852966, 10.54737854, 35.8835220337, 3.33045959473),
+    new _segment.Segment(35.8835220337, 3.33045959473, 48.4692573547, 0.149368286133),
+    new _segment.Segment(48.4692573547, 0.149368286133, 65.2790298462, 0),
+    new _segment.Segment(65.2790298462, 0, 80.2229385376, 3.1819152832),
+    new _segment.Segment(80.2229385376, 3.1819152832, 93.2883300781, 9.33671569824),
+    new _segment.Segment(93.2883300781, 9.33671569824, 100.215515137, 14.5264129639),
+    new _segment.Segment(100.215515137, 14.5264129639, 103.275047302, 17.3299560547),
+    new _segment.Segment(103.275047302, 17.3299560547, 91.0840530396, 36.913848877),
+    new _segment.Segment(91.0840530396, 36.913848877, 82.2796096802, 36.9577941895),
+    new _segment.Segment(82.2796096802, 36.9577941895, 62.4930381775, 28.2567443848),
+    new _segment.Segment(62.4930381775, 28.2567443848, 43.8692550659, 31.450592041),
+    new _segment.Segment(43.8692550659, 31.450592041, 38.3511047363, 41.3866882324),
+    new _segment.Segment(38.3511047363, 41.3866882324, 40.3481254578, 49.3695678711),
+    new _segment.Segment(40.3481254578, 49.3695678711, 89.5549087524, 72.0736618042),
+    new _segment.Segment(89.5549087524, 72.0736618042, 98.6364593506, 81.2179107666),
+    new _segment.Segment(98.6364593506, 81.2179107666, 103.577552795, 91.6844329834),
+    new _segment.Segment(103.577552795, 91.6844329834, 105.066619873, 105.312759399),
+    new _segment.Segment(105.066619873, 105.312759399, 102.944854736, 119.00226593),
+    new _segment.Segment(102.944854736, 119.00226593, 97.4592819214, 131.249084473),
+    new _segment.Segment(97.4592819214, 131.249084473, 88.7321929932, 141.34161377),
+    new _segment.Segment(88.7321929932, 141.34161377, 77.1139602661, 148.747344971),
+    new _segment.Segment(77.1139602661, 148.747344971, 64.3903503418, 152.748672485),
+    new _segment.Segment(64.3903503418, 152.748672485, 36.3809814453, 152.17010498),
+    new _segment.Segment(36.3809814453, 152.17010498, 10.1972341537, 140.973937988),
+    new _segment.Segment(10.1972341537, 140.973937988, 0, 132.101699829),
+    new _segment.Segment(118.147613525, 185.745239258, 118.147613525, 43.2052307129),
+    new _segment.Segment(118.147613525, 43.2052307129, 139.312927246, 43.5435028076),
+    new _segment.Segment(139.312927246, 43.5435028076, 142.696670532, 45.2133331299),
+    new _segment.Segment(142.696670532, 45.2133331299, 145.485076904, 49.0031738281),
+    new _segment.Segment(145.485076904, 49.0031738281, 146.682479858, 53.890411377),
+    new _segment.Segment(146.682479858, 53.890411377, 158.887435913, 45.38722229),
+    new _segment.Segment(158.887435913, 45.38722229, 169.421417236, 42.0033416748),
+    new _segment.Segment(169.421417236, 42.0033416748, 183.328033447, 41.6653594971),
+    new _segment.Segment(183.328033447, 41.6653594971, 194.615539551, 45.1487121582),
+    new _segment.Segment(194.615539551, 45.1487121582, 204.198410034, 52.1478881836),
+    new _segment.Segment(204.198410034, 52.1478881836, 211.576934814, 62.2595825195),
+    new _segment.Segment(211.576934814, 62.2595825195, 217.263702393, 78.6013717651),
+    new _segment.Segment(217.263702393, 78.6013717651, 218.911529541, 100.560188293),
+    new _segment.Segment(218.911529541, 100.560188293, 216.22052002, 117.599235535),
+    new _segment.Segment(216.22052002, 117.599235535, 209.816711426, 132.247665405),
+    new _segment.Segment(209.816711426, 132.247665405, 201.169967651, 142.696716309),
+    new _segment.Segment(201.169967651, 142.696716309, 191.296966553, 149.411346436),
+    new _segment.Segment(191.296966553, 149.411346436, 179.665206909, 153.111053467),
+    new _segment.Segment(179.665206909, 153.111053467, 163.748840332, 153.150665283),
+    new _segment.Segment(163.748840332, 153.150665283, 151.717712402, 148.858032227),
+    new _segment.Segment(151.717712402, 148.858032227, 149.287612915, 147.319641113),
+    new _segment.Segment(149.287612915, 147.319641113, 149.287612915, 185.745239258),
+    new _segment.Segment(149.287612915, 185.745239258, 118.147613525, 185.745239258),
+    new _segment.Segment(231.747619629, 152.245239258, 231.747619629, 43.2052307129),
+    new _segment.Segment(231.747619629, 43.2052307129, 254.924530029, 44.1471557617),
+    new _segment.Segment(254.924530029, 44.1471557617, 259.096252441, 48.6987762451),
+    new _segment.Segment(259.096252441, 48.6987762451, 260.310699463, 54.9163208008),
+    new _segment.Segment(260.310699463, 54.9163208008, 268.813598633, 46.4282684326),
+    new _segment.Segment(268.813598633, 46.4282684326, 276.517272949, 42.577545166),
+    new _segment.Segment(276.517272949, 42.577545166, 287.616577148, 41.3862915039),
+    new _segment.Segment(287.616577148, 41.3862915039, 295.93347168, 43.4582214355),
+    new _segment.Segment(295.93347168, 43.4582214355, 300.038665771, 46.0177764893),
+    new _segment.Segment(300.038665771, 46.0177764893, 296.694763184, 70.0946426392),
+    new _segment.Segment(296.694763184, 70.0946426392, 270.580230713, 74.9688034058),
+    new _segment.Segment(270.580230713, 74.9688034058, 262.887634277, 86.4740753174),
+    new _segment.Segment(262.887634277, 86.4740753174, 262.887634277, 152.245239258),
+    new _segment.Segment(262.887634277, 152.245239258, 231.747619629, 152.245239258),
+    new _segment.Segment(301.936950684, 110.718521118, 313.699432373, 98.4339370728),
+    new _segment.Segment(313.699432373, 98.4339370728, 335.626434326, 90.0850067139),
+    new _segment.Segment(335.626434326, 90.0850067139, 360.547637939, 86.9944763184),
+    new _segment.Segment(360.547637939, 86.9944763184, 359.42477417, 75.6834640503),
+    new _segment.Segment(359.42477417, 75.6834640503, 356.410339355, 70.5849609375),
+    new _segment.Segment(356.410339355, 70.5849609375, 351.597320557, 67.8645858765),
+    new _segment.Segment(351.597320557, 67.8645858765, 316.803100586, 76.1773605347),
+    new _segment.Segment(316.803100586, 76.1773605347, 308.797637939, 70.2694854736),
+    new _segment.Segment(308.797637939, 70.2694854736, 303.080993652, 60.0056533813),
+    new _segment.Segment(303.080993652, 60.0056533813, 310.887298584, 53.5204620361),
+    new _segment.Segment(310.887298584, 53.5204620361, 317.161071777, 49.4826812744),
+    new _segment.Segment(317.161071777, 49.4826812744, 323.805145264, 46.2468414307),
+    new _segment.Segment(323.805145264, 46.2468414307, 330.805480957, 43.8209686279),
+    new _segment.Segment(330.805480957, 43.8209686279, 338.146453857, 42.2076873779),
+    new _segment.Segment(338.146453857, 42.2076873779, 345.813964844, 41.4042510986),
+    new _segment.Segment(345.813964844, 41.4042510986, 360.864257812, 42.5269165039),
+    new _segment.Segment(360.864257812, 42.5269165039, 373.724395752, 48.0240020752),
+    new _segment.Segment(373.724395752, 48.0240020752, 382.5597229, 56.2810058594),
+    new _segment.Segment(382.5597229, 56.2810058594, 388.715759277, 68.3639297485),
+    new _segment.Segment(388.715759277, 68.3639297485, 391.087615967, 84.2066268921),
+    new _segment.Segment(391.087615967, 84.2066268921, 391.087615967, 152.245239258),
+    new _segment.Segment(391.087615967, 152.245239258, 370.230834961, 151.10307312),
+    new _segment.Segment(370.230834961, 151.10307312, 365.433776855, 145.356124878),
+    new _segment.Segment(365.433776855, 145.356124878, 364.396209717, 142.002593994),
+    new _segment.Segment(364.396209717, 142.002593994, 342.106201172, 152.929718018),
+    new _segment.Segment(342.106201172, 152.929718018, 322.042785645, 152.758834839),
+    new _segment.Segment(322.042785645, 152.758834839, 309.976379395, 147.219146729),
+    new _segment.Segment(309.976379395, 147.219146729, 302.30859375, 137.92906189),
+    new _segment.Segment(302.30859375, 137.92906189, 299.103607178, 125.07245636),
+    new _segment.Segment(299.103607178, 125.07245636, 301.936950684, 110.718521118),
+    new _segment.Segment(394.545074463, 43.2052307129, 425.468353271, 43.9754180908),
+    new _segment.Segment(425.468353271, 43.9754180908, 431.117523193, 49.731918335),
+    new _segment.Segment(431.117523193, 49.731918335, 453.493591309, 104.40750885),
+    new _segment.Segment(453.493591309, 104.40750885, 477.294830322, 46.0058746338),
+    new _segment.Segment(477.294830322, 46.0058746338, 484.432403564, 43.2052307129),
+    new _segment.Segment(484.432403564, 43.2052307129, 509.145446777, 43.2052307129),
+    new _segment.Segment(509.145446777, 43.2052307129, 448.511077881, 182.760803223),
+    new _segment.Segment(448.511077881, 182.760803223, 440.811676025, 185.735778809),
+    new _segment.Segment(440.811676025, 185.735778809, 416.714569092, 185.745239258),
+    new _segment.Segment(416.714569092, 185.745239258, 437.434753418, 141.283081055),
+    new _segment.Segment(437.434753418, 141.283081055, 394.545074463, 43.2052307129), 
 ];
-const blocks = [
-    new _rectangle.Rectangle(50, 150, 20, 20),
-    new _rectangle.Rectangle(150, 150, 40, 80),
-    new _rectangle.Rectangle(400, 400, 40, 40), 
-];
+const blocks = [];
 let lightSource = new _point.Point(500, 50);
-const segments = _loadMap.loadMap(room, blocks, walls, lightSource);
-let scene = new _pixiJs.Graphics();
+let segments = _loadMap.loadMap(room, blocks, walls);
+let scene = new _pixiJs.Container();
 app.stage.addChild(scene);
 let triangles = new _pixiJs.Graphics();
 app.stage.addChild(triangles);
 _drawScenePixi.drawScenePixi(scene, new _point.Point(50, 50), room, blocks, walls);
 const run = (lightSource1)=>{
-    let endpoints = _loadMap.processSegments(lightSource1, segments);
-    let visibility = _visibility.calculateVisibility(lightSource1, endpoints);
-    _drawScenePixi.drawVisibilityTriangles(triangles, 65280, lightSource1, visibility);
-// requestAnimationFrame(() => { })
+    requestAnimationFrame(()=>{
+        let endpoints = _loadMap.processSegments(lightSource1, segments);
+        let visibility = _visibility.calculateVisibility(lightSource1, endpoints);
+        _drawScenePixi.drawVisibilityTriangles(triangles, 65280, lightSource1, visibility);
+    });
 };
 canvas.addEventListener('mousemove', ({ pageX , pageY  })=>{
     run(new _point.Point(pageX, pageY));
 });
+window.addEventListener("resize", ()=>{
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    // canvas.width = width;
+    // canvas.height = height;
+    room.width = width + 20;
+    room.height = height + 20;
+    segments = _loadMap.loadMap(room, blocks, walls);
+    _drawScenePixi.drawScenePixi(scene, lightSource, room, blocks, walls);
+    app.renderer.resize(width, height);
+});
+let event = new Event("resize");
+window.dispatchEvent(event);
 run(new _point.Point(100, 100));
 
 },{"./load-map":"i4lqW","./visibility":"9z6vo","./rectangle":"hMUW9","./segment":"31BaA","./point":"9Cs6A","../style.scss":"kthzj","./draw-scene-pixi":"cUOFv","pixi.js":"3ZUrV"}],"i4lqW":[function(require,module,exports) {
@@ -544,19 +665,13 @@ const processSegments = (lightSource, segments)=>{
     const endPoints = [];
     for (const segment1 of segments)endPoints.push(segment1.p1, segment1.p2);
     return endPoints;
-// return segments;
 };
-function loadMap(room, blocks, walls, lightSource) {
+function loadMap(room, blocks, walls) {
     const segments = [];
     for (const segment of room.getCornerSegments())segments.push(segment);
     for (const block of blocks)for (const segment1 of block.getCornerSegments())segments.push(segment1);
     for (const segment2 of walls)segments.push(segment2);
     return segments;
-// const endPoints: EndPoint[] = [];
-// for (const segment of processSegments(lightSource, segments)) {
-//   endPoints.push(segment.p1, segment.p2);
-// }
-// return endPoints;
 }
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"JacNc":[function(require,module,exports) {
@@ -791,6 +906,8 @@ parcelHelpers.export(exports, "drawVisibilityTriangles", ()=>drawVisibilityTrian
 );
 var _graphics = require("@pixi/graphics");
 const drawScenePixi = (stage, lightSource, room, blocks, walls)=>{
+    for (let child of stage.children)child.destroy();
+    // stage.clear();
     let g_walls = new _graphics.Graphics();
     g_walls.lineStyle(2, 0, 1);
     g_walls.drawRect(room.x, room.y, room.width, room.height);
@@ -809,8 +926,9 @@ const drawScenePixi = (stage, lightSource, room, blocks, walls)=>{
 };
 const drawVisibilityTriangles = (graphic, color, lightSource, visibilityOutput)=>{
     graphic.clear();
-    graphic.lineStyle(1, color, 1);
+    // graphic.lineStyle(1, color, 1.0);
     for (const points of visibilityOutput){
+        graphic.beginFill(5592405);
         graphic.moveTo(lightSource.x, lightSource.y);
         graphic.lineTo(points[0].x, points[0].y);
         graphic.lineTo(points[1].x, points[1].y);

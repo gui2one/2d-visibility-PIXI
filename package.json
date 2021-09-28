@@ -13,13 +13,17 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "rollup": "^1.13.0",
-    "rollup-plugin-babel": "^4.3.2",
-    "rollup-plugin-typescript": "^1.0.1",
+    "@parcel/transformer-sass": "^2.0.0-rc.0",
+    "@pixi-build-tools/rollup-configurator": "^1.0.14",
+    "parcel": "^2.0.0-rc.0",
+    "sass": "^1.42.1",
     "typescript": "^3.5.1"
   },
   "scripts": {
-    "build": "rollup -c",
+    "build": "parcel index.html",
     "lint": "tslint --project tsconfig.json"
+  },
+  "dependencies": {
+    "pixi.js": "^6.1.3"
   }
 }

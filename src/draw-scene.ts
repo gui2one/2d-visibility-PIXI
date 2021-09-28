@@ -3,6 +3,9 @@ import { Rectangle } from './rectangle';
 import { Segment } from './segment';
 import { EndPoint } from './end-point';
 
+
+console.log("hello");
+
 const drawRectangle = (ctx: CanvasRenderingContext2D, color: string, rectangle: Rectangle) => {
   ctx.save();
   ctx.strokeStyle = 'black';
@@ -31,7 +34,7 @@ const drawVisibilityTriangles = (ctx: CanvasRenderingContext2D, color: string, l
     ctx.lineTo(points[1].x, points[1].y);
     ctx.closePath();
     ctx.fill();
-    ctx.stroke();
+    // ctx.stroke();
   }
   ctx.restore();
 };
@@ -44,5 +47,5 @@ export const drawScene = (ctx: CanvasRenderingContext2D, lightSource: Point, blo
   for (const wall of walls) {
     drawSegment(ctx, 'red', wall);
   }
-  drawVisibilityTriangles(ctx, 'gray', lightSource, visibilityOutput);
+  drawVisibilityTriangles(ctx, 'white', lightSource, visibilityOutput);
 };

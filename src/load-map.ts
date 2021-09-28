@@ -27,16 +27,20 @@ const setSegmentBeginning = (segment: Segment) => {
   segment.p2.beginsSegment = !segment.p1.beginsSegment;
 };
 
-const processSegments = (lightSource: Point, segments: Segment[]) => {
+export const processSegments = (lightSource: Point, segments: Segment[]) => {
   for (const segment of segments) {
     calculateEndPointAngles(lightSource, segment);
     setSegmentBeginning(segment);
   }
-
-  return segments;
+  const endPoints: EndPoint[] = [];
+  for (const segment of segments) {
+    endPoints.push(segment.p1, segment.p2);
+  }
+  return endPoints;
+  // return segments;
 };
 
-export function loadMap(room: Rectangle, blocks: Rectangle[], walls: Segment[], lightSource: Point): EndPoint[] {
+export function loadMap(room: Rectangle, blocks: Rectangle[], walls: Segment[], lightSource: Point): Segment[] {
   const segments: Segment[] = [];
   for (const segment of room.getCornerSegments()) {
     segments.push(segment);
@@ -49,9 +53,11 @@ export function loadMap(room: Rectangle, blocks: Rectangle[], walls: Segment[], 
   for (const segment of walls) {
     segments.push(segment);
   }
-  const endPoints: EndPoint[] = [];
-  for (const segment of processSegments(lightSource, segments)) {
-    endPoints.push(segment.p1, segment.p2);
-  }
-  return endPoints;
+
+  return segments;
+  // const endPoints: EndPoint[] = [];
+  // for (const segment of processSegments(lightSource, segments)) {
+  //   endPoints.push(segment.p1, segment.p2);
+  // }
+  // return endPoints;
 }

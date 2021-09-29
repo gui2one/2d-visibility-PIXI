@@ -455,6 +455,7 @@ function hmrAcceptRun(bundle, id) {
 }
 
 },{}],"1yGwE":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _drawScenePixi = require("./draw-scene-pixi");
 var _loadMap = require("./load-map");
 var _visibility = require("./visibility");
@@ -463,6 +464,8 @@ var _segment = require("./segment");
 var _point = require("./point");
 var _pixiJs = require("pixi.js");
 var _styleScss = require("../style.scss");
+var _shape = require("./classes/Shape");
+var _shapeDefault = parcelHelpers.interopDefault(_shape);
 // Prepare canvas
 const canvas = document.getElementById('scene');
 const app = new _pixiJs.Application({
@@ -473,14 +476,14 @@ const app = new _pixiJs.Application({
     antialias: true
 });
 document.body.appendChild(app.view);
+let shape1 = new _shapeDefault.default([
+    new _segment.Segment(20, 20, 20, 120),
+    new _segment.Segment(20, 20, 100, 20),
+    new _segment.Segment(100, 20, 150, 100),
+    new _segment.Segment(150, 100, 50, 100)
+]);
 // // Setup scene
 const room = new _rectangle.Rectangle(-10, -10, window.innerWidth + 20, window.innerHeight + 20);
-// const walls = [
-//   new Segment(20, 20, 20, 120),
-//   new Segment(20, 20, 100, 20),
-//   new Segment(100, 20, 150, 100),
-//   new Segment(150, 100, 50, 100),
-// ];
 const walls = [
     new _segment.Segment(0, 132.101699829, 13.9535665512, 113.098945618),
     new _segment.Segment(13.9535665512, 113.098945618, 20.8865890503, 112.653991699),
@@ -635,7 +638,7 @@ let event = new Event("resize");
 window.dispatchEvent(event);
 run(new _point.Point(100, 100));
 
-},{"./load-map":"i4lqW","./visibility":"9z6vo","./rectangle":"hMUW9","./segment":"31BaA","./point":"9Cs6A","../style.scss":"kthzj","./draw-scene-pixi":"cUOFv","pixi.js":"3ZUrV"}],"i4lqW":[function(require,module,exports) {
+},{"./load-map":"i4lqW","./visibility":"9z6vo","./rectangle":"hMUW9","./segment":"31BaA","./point":"9Cs6A","../style.scss":"kthzj","./draw-scene-pixi":"cUOFv","pixi.js":"3ZUrV","./classes/Shape":"1A5QK","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"i4lqW":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "processSegments", ()=>processSegments
@@ -909,7 +912,7 @@ const drawScenePixi = (stage, lightSource, room, blocks, walls)=>{
     for (let child of stage.children)child.destroy();
     // stage.clear();
     let g_walls = new _graphics.Graphics();
-    g_walls.lineStyle(2, 0, 1);
+    g_walls.lineStyle(2, 16777215, 0.1);
     g_walls.drawRect(room.x, room.y, room.width, room.height);
     for (let wall of walls){
         g_walls.moveTo(wall.p1.x, wall.p1.y);
@@ -918,7 +921,7 @@ const drawScenePixi = (stage, lightSource, room, blocks, walls)=>{
     stage.addChild(g_walls);
     let g_blocks = new _graphics.Graphics();
     for (const block of blocks){
-        g_blocks.beginFill(0, 1);
+        g_blocks.beginFill(16777215, 0.1);
         g_blocks.drawRect(block.x, block.y, block.width, block.height);
         g_blocks.endFill();
     }
@@ -928,7 +931,7 @@ const drawVisibilityTriangles = (graphic, color, lightSource, visibilityOutput)=
     graphic.clear();
     // graphic.lineStyle(1, color, 1.0);
     for (const points of visibilityOutput){
-        graphic.beginFill(5592405);
+        graphic.beginFill(5592405, 0.5);
         graphic.moveTo(lightSource.x, lightSource.y);
         graphic.lineTo(points[0].x, points[0].y);
         graphic.lineTo(points[1].x, points[1].y);
@@ -40277,6 +40280,21 @@ function __extends(d, b) {
     return AnimatedSprite2;
 }(_sprite.Sprite);
 
-},{"@pixi/core":"d0INm","@pixi/sprite":"aeiZG","@pixi/ticker":"5j6Uq","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}]},["1n2s4","1yGwE"], "1yGwE", "parcelRequirea458")
+},{"@pixi/core":"d0INm","@pixi/sprite":"aeiZG","@pixi/ticker":"5j6Uq","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"1A5QK":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "default", ()=>Shape
+);
+var _graphics = require("@pixi/graphics");
+class Shape extends _graphics.Graphics {
+    // segments : Segment[];
+    constructor(segments){
+        super();
+        this.segments = segments;
+        if (segments) this.segments = segments;
+    }
+}
+
+},{"@pixi/graphics":"eq7Pq","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}]},["1n2s4","1yGwE"], "1yGwE", "parcelRequirea458")
 
 //# sourceMappingURL=index.f25914ac.js.map

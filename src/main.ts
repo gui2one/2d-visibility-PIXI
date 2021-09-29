@@ -8,11 +8,11 @@ import { Point } from './point';
 import { Application, Graphics, Container } from 'pixi.js'
 import "../style.scss"
 
+import Shape from "./classes/Shape"
 
 
 // Prepare canvas
 const canvas = document.getElementById('scene') as HTMLCanvasElement;
-
 
 
 const app = new Application({
@@ -25,16 +25,15 @@ const app = new Application({
 document.body.appendChild(app.view)
 
 
-
+let shape1 = new Shape([
+  new Segment(20, 20, 20, 120),
+  new Segment(20, 20, 100, 20),
+  new Segment(100, 20, 150, 100),
+  new Segment(150, 100, 50, 100)
+]);
 // // Setup scene
 const room = new Rectangle(-10, -10, window.innerWidth + 20, window.innerHeight + 20);
 
-// const walls = [
-//   new Segment(20, 20, 20, 120),
-//   new Segment(20, 20, 100, 20),
-//   new Segment(100, 20, 150, 100),
-//   new Segment(150, 100, 50, 100),
-// ];
 
 const walls = [
   new Segment(0.0, 132.101699829, 13.9535665512, 113.098945618),

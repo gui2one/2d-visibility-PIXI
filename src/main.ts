@@ -9,7 +9,7 @@ import { GradientFactory, ColorStop } from '@pixi-essentials/gradients';
 import { Application, Graphics, Container } from 'pixi.js'
 import "../style.scss"
 
-import Shape from "./classes/Shape"
+import SegmentShape from "./segment-shape"
 
 
 // Prepare canvas
@@ -56,8 +56,8 @@ let gradient = GradientFactory.createRadialGradient(
 
 
 
-const shapes: Shape[] = [];
-let shape1 = new Shape([
+const shapes: SegmentShape[] = [];
+let shape1 = new SegmentShape([
   new Segment(20, 20, 20, 120),
   new Segment(20, 20, 100, 20),
   new Segment(100, 20, 150, 100),

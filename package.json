@@ -14,8 +14,7 @@
   "license": "MIT",
   "devDependencies": {
     "@parcel/transformer-sass": "^2.0.0-rc.0",
-    "@pixi-build-tools/rollup-configurator": "^1.0.14",
-    "parcel": "^2.0.0-rc.0",
+    "@types/pixi.js": "^5.0.0",
     "sass": "^1.42.1",
     "typescript": "^3.5.1"
   },

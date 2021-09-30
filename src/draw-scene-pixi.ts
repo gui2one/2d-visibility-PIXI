@@ -12,7 +12,7 @@ export const drawScenePixi = (stage: Container, lightSource: Point, room: Rectan
 
     // stage.clear();
     let g_walls = new Graphics();
-    g_walls.lineStyle(2, 0xffffff, .1);
+    g_walls.lineStyle(2, 0xffffff, .05);
     g_walls.drawRect(room.x, room.y, room.width, room.height)
     for (let wall of walls) {
 
@@ -35,7 +35,7 @@ export const drawVisibilityTriangles = (graphic: Graphics, color: number, lightS
     graphic.clear();
     // graphic.lineStyle(1, color, 1.0);
     for (const points of visibilityOutput) {
-        graphic.beginFill(0x555555,0.5);
+        graphic.beginFill(0x555555, 0.5);
         graphic.moveTo(lightSource.x, lightSource.y);
         graphic.lineTo(points[0].x, points[0].y);
         graphic.lineTo(points[1].x, points[1].y);

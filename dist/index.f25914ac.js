@@ -456,13 +456,14 @@ function hmrAcceptRun(bundle, id) {
 
 },{}],"1yGwE":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+var _pixiJs = require("pixi.js");
 var _drawScenePixi = require("./draw-scene-pixi");
 var _loadMap = require("./load-map");
 var _visibility = require("./visibility");
 var _rectangle = require("./rectangle");
 var _segment = require("./segment");
 var _point = require("./point");
-var _pixiJs = require("pixi.js");
+var _gradients = require("@pixi-essentials/gradients");
 var _styleScss = require("../style.scss");
 var _shape = require("./classes/Shape");
 var _shapeDefault = parcelHelpers.interopDefault(_shape);
@@ -476,12 +477,40 @@ const app = new _pixiJs.Application({
     antialias: true
 });
 document.body.appendChild(app.view);
+let texture = _pixiJs.RenderTexture.create({
+    width: 512,
+    height: 512
+});
+let gradient = _gradients.GradientFactory.createRadialGradient(app.renderer, texture, {
+    x0: 256,
+    y0: 256,
+    r0: 0,
+    x1: 256,
+    y1: 256,
+    r1: 256,
+    colorStops: [
+        {
+            offset: 0,
+            color: 16777215
+        },
+        {
+            offset: 0.1,
+            color: 2236962
+        },
+        {
+            offset: 1,
+            color: 0
+        }
+    ]
+});
+const shapes = [];
 let shape1 = new _shapeDefault.default([
     new _segment.Segment(20, 20, 20, 120),
     new _segment.Segment(20, 20, 100, 20),
     new _segment.Segment(100, 20, 150, 100),
     new _segment.Segment(150, 100, 50, 100)
 ]);
+shapes.push(shape1);
 // // Setup scene
 const room = new _rectangle.Rectangle(-10, -10, window.innerWidth + 20, window.innerHeight + 20);
 const walls = [
@@ -612,6 +641,18 @@ let scene = new _pixiJs.Container();
 app.stage.addChild(scene);
 let triangles = new _pixiJs.Graphics();
 app.stage.addChild(triangles);
+let gradient_rect = new _pixiJs.Graphics();
+app.stage.addChild(gradient_rect);
+gradient_rect.beginTextureFill({
+    texture: texture,
+    matrix: new _pixiJs.Matrix().translate(-256, -256)
+});
+// gradient_rect.drawRect(-0, -0, 512, 512);
+gradient_rect.drawRect(-256, -256, 512, 512);
+gradient_rect.endFill();
+gradient_rect.zIndex = -1;
+gradient_rect.scale.set(2, 2);
+gradient_rect.mask = triangles;
 _drawScenePixi.drawScenePixi(scene, new _point.Point(50, 50), room, blocks, walls);
 const run = (lightSource1)=>{
     requestAnimationFrame(()=>{
@@ -622,6 +663,7 @@ const run = (lightSource1)=>{
 };
 canvas.addEventListener('mousemove', ({ pageX , pageY  })=>{
     run(new _point.Point(pageX, pageY));
+    gradient_rect.position.set(pageX, pageY);
 });
 window.addEventListener("resize", ()=>{
     let width = window.innerWidth;
@@ -638,269 +680,7 @@ let event = new Event("resize");
 window.dispatchEvent(event);
 run(new _point.Point(100, 100));
 
-},{"./load-map":"i4lqW","./visibility":"9z6vo","./rectangle":"hMUW9","./segment":"31BaA","./point":"9Cs6A","../style.scss":"kthzj","./draw-scene-pixi":"cUOFv","pixi.js":"3ZUrV","./classes/Shape":"1A5QK","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"i4lqW":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "processSegments", ()=>processSegments
-);
-parcelHelpers.export(exports, "loadMap", ()=>loadMap
-);
-const calculateEndPointAngles = (lightSource, segment)=>{
-    const { x , y  } = lightSource;
-    const dx = 0.5 * (segment.p1.x + segment.p2.x) - x;
-    const dy = 0.5 * (segment.p1.y + segment.p2.y) - y;
-    segment.d = dx * dx + dy * dy;
-    segment.p1.angle = Math.atan2(segment.p1.y - y, segment.p1.x - x);
-    segment.p2.angle = Math.atan2(segment.p2.y - y, segment.p2.x - x);
-};
-const setSegmentBeginning = (segment)=>{
-    let dAngle = segment.p2.angle - segment.p1.angle;
-    if (dAngle <= -Math.PI) dAngle += 2 * Math.PI;
-    if (dAngle > Math.PI) dAngle -= 2 * Math.PI;
-    segment.p1.beginsSegment = dAngle > 0;
-    segment.p2.beginsSegment = !segment.p1.beginsSegment;
-};
-const processSegments = (lightSource, segments)=>{
-    for (const segment of segments){
-        calculateEndPointAngles(lightSource, segment);
-        setSegmentBeginning(segment);
-    }
-    const endPoints = [];
-    for (const segment1 of segments)endPoints.push(segment1.p1, segment1.p2);
-    return endPoints;
-};
-function loadMap(room, blocks, walls) {
-    const segments = [];
-    for (const segment of room.getCornerSegments())segments.push(segment);
-    for (const block of blocks)for (const segment1 of block.getCornerSegments())segments.push(segment1);
-    for (const segment2 of walls)segments.push(segment2);
-    return segments;
-}
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"JacNc":[function(require,module,exports) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
-    };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, '__esModule', {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === 'default' || key === '__esModule') return;
-        // Skip duplicate re-exports when they have the same value.
-        if (key in dest && dest[key] === source[key]) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
-
-},{}],"9z6vo":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "calculateVisibility", ()=>calculateVisibility
-);
-var _lineIntersection = require("./line-intersection");
-var _endpointCompare = require("./endpoint-compare");
-var _segmentInFrontOf = require("./segment-in-front-of");
-var _point = require("./point");
-function getTrianglePoints(origin, angle1, angle2, segment) {
-    const p1 = origin;
-    const p2 = new _point.Point(origin.x + Math.cos(angle1), origin.y + Math.sin(angle1));
-    const p3 = new _point.Point(0, 0);
-    const p4 = new _point.Point(0, 0);
-    if (segment) {
-        p3.x = segment.p1.x;
-        p3.y = segment.p1.y;
-        p4.x = segment.p2.x;
-        p4.y = segment.p2.y;
-    } else {
-        p3.x = origin.x + Math.cos(angle1) * 200;
-        p3.y = origin.y + Math.sin(angle1) * 200;
-        p4.x = origin.x + Math.cos(angle2) * 200;
-        p4.y = origin.y + Math.sin(angle2) * 200;
-    }
-    const pBegin = _lineIntersection.lineIntersection(p3, p4, p1, p2);
-    p2.x = origin.x + Math.cos(angle2);
-    p2.y = origin.y + Math.sin(angle2);
-    const pEnd = _lineIntersection.lineIntersection(p3, p4, p1, p2);
-    return [
-        pBegin,
-        pEnd
-    ];
-}
-function calculateVisibility(origin, endpoints) {
-    const openSegments = [];
-    const output = [];
-    let beginAngle = 0;
-    endpoints.sort(_endpointCompare.endpointCompare);
-    for(let pass = 0; pass < 2; pass += 1)for (const endpoint of endpoints){
-        const openSegment = openSegments[0];
-        if (endpoint.beginsSegment) {
-            let index = 0;
-            let segment = openSegments[index];
-            while(segment && _segmentInFrontOf.segmentInFrontOf(endpoint.segment, segment, origin)){
-                index += 1;
-                segment = openSegments[index];
-            }
-            if (!segment) openSegments.push(endpoint.segment);
-            else openSegments.splice(index, 0, endpoint.segment);
-        } else {
-            const index = openSegments.indexOf(endpoint.segment);
-            if (index > -1) openSegments.splice(index, 1);
-        }
-        if (openSegment !== openSegments[0]) {
-            if (pass === 1) {
-                const trianglePoints = getTrianglePoints(origin, beginAngle, endpoint.angle, openSegment);
-                output.push(trianglePoints);
-            }
-            beginAngle = endpoint.angle;
-        }
-    }
-    return output;
-}
-
-},{"./line-intersection":"fN3F5","./endpoint-compare":"1yKZq","./segment-in-front-of":"7sLpQ","./point":"9Cs6A","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"fN3F5":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "lineIntersection", ()=>lineIntersection
-);
-var _point = require("./point");
-function lineIntersection(point1, point2, point3, point4) {
-    const s = ((point4.x - point3.x) * (point1.y - point3.y) - (point4.y - point3.y) * (point1.x - point3.x)) / ((point4.y - point3.y) * (point2.x - point1.x) - (point4.x - point3.x) * (point2.y - point1.y));
-    return new _point.Point(point1.x + s * (point2.x - point1.x), point1.y + s * (point2.y - point1.y));
-}
-
-},{"./point":"9Cs6A","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"9Cs6A":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "Point", ()=>Point
-);
-class Point {
-    constructor(x, y){
-        this.x = x;
-        this.y = y;
-    }
-}
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"1yKZq":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "endpointCompare", ()=>endpointCompare
-);
-function endpointCompare(pointA, pointB) {
-    if (pointA.angle > pointB.angle) return 1;
-    if (pointA.angle < pointB.angle) return -1;
-    if (!pointA.beginsSegment && pointB.beginsSegment) return 1;
-    if (pointA.beginsSegment && !pointB.beginsSegment) return -1;
-    return 0;
-}
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"7sLpQ":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "segmentInFrontOf", ()=>segmentInFrontOf
-);
-var _point = require("./point");
-const leftOf = (segment, point)=>{
-    const cross = (segment.p2.x - segment.p1.x) * (point.y - segment.p1.y) - (segment.p2.y - segment.p1.y) * (point.x - segment.p1.x);
-    return cross < 0;
-};
-const interpolate = (pointA, pointB, f)=>{
-    return new _point.Point(pointA.x * (1 - f) + pointB.x * f, pointA.y * (1 - f) + pointB.y * f);
-};
-const segmentInFrontOf = (segmentA, segmentB, relativePoint)=>{
-    const A1 = leftOf(segmentA, interpolate(segmentB.p1, segmentB.p2, 0.01));
-    const A2 = leftOf(segmentA, interpolate(segmentB.p2, segmentB.p1, 0.01));
-    const A3 = leftOf(segmentA, relativePoint);
-    const B1 = leftOf(segmentB, interpolate(segmentA.p1, segmentA.p2, 0.01));
-    const B2 = leftOf(segmentB, interpolate(segmentA.p2, segmentA.p1, 0.01));
-    const B3 = leftOf(segmentB, relativePoint);
-    if (B1 === B2 && B2 !== B3) return true;
-    if (A1 === A2 && A2 === A3) return true;
-    if (A1 === A2 && A2 !== A3) return false;
-    if (B1 === B2 && B2 === B3) return false;
-    return false;
-};
-
-},{"./point":"9Cs6A","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"hMUW9":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "Rectangle", ()=>Rectangle
-);
-var _point = require("./point");
-var _segment = require("./segment");
-class Rectangle {
-    constructor(x, y, width, height){
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-    }
-    getCorners() {
-        return {
-            nw: new _point.Point(this.x, this.y),
-            sw: new _point.Point(this.x, this.y + this.height),
-            ne: new _point.Point(this.x + this.width, this.y),
-            se: new _point.Point(this.x + this.width, this.y + this.height)
-        };
-    }
-    getCornerSegments() {
-        const { nw , sw , ne , se  } = this.getCorners();
-        return [
-            new _segment.Segment(nw.x, nw.y, ne.x, ne.y),
-            new _segment.Segment(nw.x, nw.y, sw.x, sw.y),
-            new _segment.Segment(ne.x, ne.y, se.x, se.y),
-            new _segment.Segment(sw.x, sw.y, se.x, se.y), 
-        ];
-    }
-}
-
-},{"./point":"9Cs6A","./segment":"31BaA","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"31BaA":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "Segment", ()=>Segment
-);
-var _endPoint = require("./end-point");
-class Segment {
-    constructor(x1, y1, x2, y2){
-        this.d = 0;
-        this.p1 = new _endPoint.EndPoint(x1, y1);
-        this.p2 = new _endPoint.EndPoint(x2, y2);
-        this.p1.segment = this;
-        this.p2.segment = this;
-    }
-}
-
-},{"./end-point":"2KIK4","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"2KIK4":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "EndPoint", ()=>EndPoint
-);
-var _point = require("./point");
-class EndPoint extends _point.Point {
-    constructor(x, y){
-        super(x, y);
-        this.x = x;
-        this.y = y;
-    }
-}
-
-},{"./point":"9Cs6A","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"kthzj":[function() {},{}],"cUOFv":[function(require,module,exports) {
+},{"./draw-scene-pixi":"cUOFv","./load-map":"i4lqW","./visibility":"9z6vo","./rectangle":"hMUW9","./segment":"31BaA","./point":"9Cs6A","pixi.js":"3ZUrV","../style.scss":"kthzj","./classes/Shape":"1A5QK","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@pixi-essentials/gradients":"paZ3k"}],"cUOFv":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "drawScenePixi", ()=>drawScenePixi
@@ -15329,7 +15109,39 @@ function isMobile(param) {
 }
 exports.default = isMobile;
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"lqjFh":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"JacNc":[function(require,module,exports) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule') return;
+        // Skip duplicate re-exports when they have the same value.
+        if (key in dest && dest[key] === source[key]) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"lqjFh":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ALPHA_MODES", ()=>ALPHA_MODES
@@ -23132,7 +22944,237 @@ function sortChildren(a, b) {
  * @method containerUpdateTransform
  */ Container1.prototype.containerUpdateTransform = Container1.prototype.updateTransform;
 
-},{"@pixi/settings":"habh9","@pixi/math":"1qR3C","@pixi/utils":"joR65","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"3ZUrV":[function(require,module,exports) {
+},{"@pixi/settings":"habh9","@pixi/math":"1qR3C","@pixi/utils":"joR65","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"i4lqW":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "processSegments", ()=>processSegments
+);
+parcelHelpers.export(exports, "loadMap", ()=>loadMap
+);
+const calculateEndPointAngles = (lightSource, segment)=>{
+    const { x , y  } = lightSource;
+    const dx = 0.5 * (segment.p1.x + segment.p2.x) - x;
+    const dy = 0.5 * (segment.p1.y + segment.p2.y) - y;
+    segment.d = dx * dx + dy * dy;
+    segment.p1.angle = Math.atan2(segment.p1.y - y, segment.p1.x - x);
+    segment.p2.angle = Math.atan2(segment.p2.y - y, segment.p2.x - x);
+};
+const setSegmentBeginning = (segment)=>{
+    let dAngle = segment.p2.angle - segment.p1.angle;
+    if (dAngle <= -Math.PI) dAngle += 2 * Math.PI;
+    if (dAngle > Math.PI) dAngle -= 2 * Math.PI;
+    segment.p1.beginsSegment = dAngle > 0;
+    segment.p2.beginsSegment = !segment.p1.beginsSegment;
+};
+const processSegments = (lightSource, segments)=>{
+    for (const segment of segments){
+        calculateEndPointAngles(lightSource, segment);
+        setSegmentBeginning(segment);
+    }
+    const endPoints = [];
+    for (const segment1 of segments)endPoints.push(segment1.p1, segment1.p2);
+    return endPoints;
+};
+function loadMap(room, blocks, walls) {
+    const segments = [];
+    for (const segment of room.getCornerSegments())segments.push(segment);
+    for (const block of blocks)for (const segment1 of block.getCornerSegments())segments.push(segment1);
+    for (const segment2 of walls)segments.push(segment2);
+    return segments;
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"9z6vo":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "calculateVisibility", ()=>calculateVisibility
+);
+var _lineIntersection = require("./line-intersection");
+var _endpointCompare = require("./endpoint-compare");
+var _segmentInFrontOf = require("./segment-in-front-of");
+var _point = require("./point");
+function getTrianglePoints(origin, angle1, angle2, segment) {
+    const p1 = origin;
+    const p2 = new _point.Point(origin.x + Math.cos(angle1), origin.y + Math.sin(angle1));
+    const p3 = new _point.Point(0, 0);
+    const p4 = new _point.Point(0, 0);
+    if (segment) {
+        p3.x = segment.p1.x;
+        p3.y = segment.p1.y;
+        p4.x = segment.p2.x;
+        p4.y = segment.p2.y;
+    } else {
+        p3.x = origin.x + Math.cos(angle1) * 200;
+        p3.y = origin.y + Math.sin(angle1) * 200;
+        p4.x = origin.x + Math.cos(angle2) * 200;
+        p4.y = origin.y + Math.sin(angle2) * 200;
+    }
+    const pBegin = _lineIntersection.lineIntersection(p3, p4, p1, p2);
+    p2.x = origin.x + Math.cos(angle2);
+    p2.y = origin.y + Math.sin(angle2);
+    const pEnd = _lineIntersection.lineIntersection(p3, p4, p1, p2);
+    return [
+        pBegin,
+        pEnd
+    ];
+}
+function calculateVisibility(origin, endpoints) {
+    const openSegments = [];
+    const output = [];
+    let beginAngle = 0;
+    endpoints.sort(_endpointCompare.endpointCompare);
+    for(let pass = 0; pass < 2; pass += 1)for (const endpoint of endpoints){
+        const openSegment = openSegments[0];
+        if (endpoint.beginsSegment) {
+            let index = 0;
+            let segment = openSegments[index];
+            while(segment && _segmentInFrontOf.segmentInFrontOf(endpoint.segment, segment, origin)){
+                index += 1;
+                segment = openSegments[index];
+            }
+            if (!segment) openSegments.push(endpoint.segment);
+            else openSegments.splice(index, 0, endpoint.segment);
+        } else {
+            const index = openSegments.indexOf(endpoint.segment);
+            if (index > -1) openSegments.splice(index, 1);
+        }
+        if (openSegment !== openSegments[0]) {
+            if (pass === 1) {
+                const trianglePoints = getTrianglePoints(origin, beginAngle, endpoint.angle, openSegment);
+                output.push(trianglePoints);
+            }
+            beginAngle = endpoint.angle;
+        }
+    }
+    return output;
+}
+
+},{"./line-intersection":"fN3F5","./endpoint-compare":"1yKZq","./segment-in-front-of":"7sLpQ","./point":"9Cs6A","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"fN3F5":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "lineIntersection", ()=>lineIntersection
+);
+var _point = require("./point");
+function lineIntersection(point1, point2, point3, point4) {
+    const s = ((point4.x - point3.x) * (point1.y - point3.y) - (point4.y - point3.y) * (point1.x - point3.x)) / ((point4.y - point3.y) * (point2.x - point1.x) - (point4.x - point3.x) * (point2.y - point1.y));
+    return new _point.Point(point1.x + s * (point2.x - point1.x), point1.y + s * (point2.y - point1.y));
+}
+
+},{"./point":"9Cs6A","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"9Cs6A":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Point", ()=>Point
+);
+class Point {
+    constructor(x, y){
+        this.x = x;
+        this.y = y;
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"1yKZq":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "endpointCompare", ()=>endpointCompare
+);
+function endpointCompare(pointA, pointB) {
+    if (pointA.angle > pointB.angle) return 1;
+    if (pointA.angle < pointB.angle) return -1;
+    if (!pointA.beginsSegment && pointB.beginsSegment) return 1;
+    if (pointA.beginsSegment && !pointB.beginsSegment) return -1;
+    return 0;
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"7sLpQ":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "segmentInFrontOf", ()=>segmentInFrontOf
+);
+var _point = require("./point");
+const leftOf = (segment, point)=>{
+    const cross = (segment.p2.x - segment.p1.x) * (point.y - segment.p1.y) - (segment.p2.y - segment.p1.y) * (point.x - segment.p1.x);
+    return cross < 0;
+};
+const interpolate = (pointA, pointB, f)=>{
+    return new _point.Point(pointA.x * (1 - f) + pointB.x * f, pointA.y * (1 - f) + pointB.y * f);
+};
+const segmentInFrontOf = (segmentA, segmentB, relativePoint)=>{
+    const A1 = leftOf(segmentA, interpolate(segmentB.p1, segmentB.p2, 0.01));
+    const A2 = leftOf(segmentA, interpolate(segmentB.p2, segmentB.p1, 0.01));
+    const A3 = leftOf(segmentA, relativePoint);
+    const B1 = leftOf(segmentB, interpolate(segmentA.p1, segmentA.p2, 0.01));
+    const B2 = leftOf(segmentB, interpolate(segmentA.p2, segmentA.p1, 0.01));
+    const B3 = leftOf(segmentB, relativePoint);
+    if (B1 === B2 && B2 !== B3) return true;
+    if (A1 === A2 && A2 === A3) return true;
+    if (A1 === A2 && A2 !== A3) return false;
+    if (B1 === B2 && B2 === B3) return false;
+    return false;
+};
+
+},{"./point":"9Cs6A","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"hMUW9":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Rectangle", ()=>Rectangle
+);
+var _point = require("./point");
+var _segment = require("./segment");
+class Rectangle {
+    constructor(x, y, width, height){
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
+    getCorners() {
+        return {
+            nw: new _point.Point(this.x, this.y),
+            sw: new _point.Point(this.x, this.y + this.height),
+            ne: new _point.Point(this.x + this.width, this.y),
+            se: new _point.Point(this.x + this.width, this.y + this.height)
+        };
+    }
+    getCornerSegments() {
+        const { nw , sw , ne , se  } = this.getCorners();
+        return [
+            new _segment.Segment(nw.x, nw.y, ne.x, ne.y),
+            new _segment.Segment(nw.x, nw.y, sw.x, sw.y),
+            new _segment.Segment(ne.x, ne.y, se.x, se.y),
+            new _segment.Segment(sw.x, sw.y, se.x, se.y), 
+        ];
+    }
+}
+
+},{"./point":"9Cs6A","./segment":"31BaA","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"31BaA":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Segment", ()=>Segment
+);
+var _endPoint = require("./end-point");
+class Segment {
+    constructor(x1, y1, x2, y2){
+        this.d = 0;
+        this.p1 = new _endPoint.EndPoint(x1, y1);
+        this.p2 = new _endPoint.EndPoint(x2, y2);
+        this.p1.segment = this;
+        this.p2.segment = this;
+    }
+}
+
+},{"./end-point":"2KIK4","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"2KIK4":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "EndPoint", ()=>EndPoint
+);
+var _point = require("./point");
+class EndPoint extends _point.Point {
+    constructor(x, y){
+        super(x, y);
+        this.x = x;
+        this.y = y;
+    }
+}
+
+},{"./point":"9Cs6A","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"3ZUrV":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "utils", ()=>_utils
@@ -40280,7 +40322,7 @@ function __extends(d, b) {
     return AnimatedSprite2;
 }(_sprite.Sprite);
 
-},{"@pixi/core":"d0INm","@pixi/sprite":"aeiZG","@pixi/ticker":"5j6Uq","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"1A5QK":[function(require,module,exports) {
+},{"@pixi/core":"d0INm","@pixi/sprite":"aeiZG","@pixi/ticker":"5j6Uq","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"kthzj":[function() {},{}],"1A5QK":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "default", ()=>Shape
@@ -40295,6 +40337,125 @@ class Shape extends _graphics.Graphics {
     }
 }
 
-},{"@pixi/graphics":"eq7Pq","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}]},["1n2s4","1yGwE"], "1yGwE", "parcelRequirea458")
+},{"@pixi/graphics":"eq7Pq","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"paZ3k":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "GradientFactory", ()=>GradientFactory
+);
+/* eslint-disable */ /*!
+ * @pixi-essentials/gradients - v0.0.4
+ * Compiled Thu, 17 Jun 2021 02:37:18 UTC
+ *
+ * @pixi-essentials/gradients is licensed under the MIT License.
+ * http://www.opensource.org/licenses/mit-license
+ * 
+ * Copyright 2019-2020, Shukant K. Pal <shukantpal@outlook.com>, All Rights Reserved
+ */ var _math = require("@pixi/math");
+var _core = require("@pixi/core");
+var _sprite = require("@pixi/sprite");
+/**
+ * Converts a hexadecimal color into a CSS color string.
+ * 
+ * @ignore
+ * @param color - The hexadecimal form of the color.
+ */ function cssColor(color) {
+    let string = color.toString(16);
+    while(string.length < 6)string = `0${string}`;
+    return `#${string}`;
+}
+const tempSourceFrame = new _math.Rectangle();
+const tempDestinationFrame = new _math.Rectangle();
+/**
+ * Factory class for generating color-gradient textures.
+ * 
+ * @public
+ */ class GradientFactory {
+    /**
+     * Renders a linear-gradient into `renderTexture` that starts from (x0, y0) and ends at (x1, y1). These
+     * coordinates are defined in the **texture's space**. That means only the frame (0, 0, `renderTexture.width`, `renderTexture.height`)
+     * will be rendered.
+     * 
+     * This method can be called inside a render cycle, and will preserve the renderer state. However, the current implementation
+     * causes a batch renderer flush.
+     * 
+     * @param renderer - The renderer to use for drawing the gradient.
+     * @param renderTexture - The texture to render the gradient into.
+     * @param options - The gradient parameters.
+     * @param options.x0 - The x-coordinate of the gradient's start point.
+     * @param options.y0 - The y-coordinate of the gradient's start point.
+     * @param options.x1 - The x-coordinate of the gradient's end point.
+     * @param options.y1 - The y-coordinate of the gradient's end point.
+     * @param options.colorStops - The color stops along the gradient pattern.
+     * @todo This implementation is currently using the Canvas API (slow). It will be converted to a WebGL shader.
+     * @todo This implementation causes a batch renderer flush. This will be optimized in a future release.
+     */ static createLinearGradient(renderer, renderTexture, options) {
+        const { x0 , y0 , x1 , y1 , colorStops  } = options;
+        const canvas = document.createElement('canvas');
+        canvas.width = renderTexture.width;
+        canvas.height = renderTexture.height;
+        const context = canvas.getContext('2d');
+        const gradient = context.createLinearGradient(x0, y0, x1, y1);
+        colorStops.forEach((stop)=>{
+            gradient.addColorStop(stop.offset, cssColor(stop.color));
+        });
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, renderTexture.width, renderTexture.height);
+        // Store the current render-texture binding.
+        const renderTarget = renderer.renderTexture.current;
+        const sourceFrame = tempSourceFrame.copyFrom(renderer.renderTexture.sourceFrame);
+        const destinationFrame = tempDestinationFrame.copyFrom(renderer.renderTexture.destinationFrame);
+        const renderSprite = new _sprite.Sprite(_core.Texture.from(canvas));
+        renderer.batch.flush();
+        renderer.renderTexture.bind(renderTexture);
+        renderSprite.render(renderer);
+        renderer.batch.flush();
+        renderer.renderTexture.bind(renderTarget, sourceFrame, destinationFrame);
+        return renderTexture;
+    }
+    /**
+     * Renders a radial-gradient into `renderTexture` that starts at the circle centered at (x0, y0) of radius r0 and
+     * ends at the circle centered at (x1, y1) of radius r1.
+     * 
+     * This method can be called inside a render cycle, and will preserve the renderer state. However, the current implementation
+     * causes a batch renderer flush.
+     * 
+     * @param renderer - The renderer to use for drawing the gradient.
+     * @param renderTexture - The texture to render the gradient into.
+     * @param options - The gradient parameters.
+     * @param options.x0 - The x-coordinate of the starting circle's center.
+     * @param options.y0 - The y-coordinate of the starting circle's center.
+     * @param options.r0 - The radius of the starting circle.
+     * @param options.x1 - The x-coordinate of the ending circle's center.
+     * @param options.y1 - The y-coordinate of the ending circle's center.
+     * @param options.colorStops - The color stops along the gradient pattern.
+     * @todo This implementation is currently using the Canvas API (slow). It will be converted to a WebGL shader.
+     * @todo This implementation causes a batch renderer flush. This will be optimized in a future release.
+     */ static createRadialGradient(renderer, renderTexture, options) {
+        const { x0 , y0 , r0 , x1 , y1 , r1 , colorStops  } = options;
+        const canvas = document.createElement('canvas');
+        canvas.width = renderTexture.width;
+        canvas.height = renderTexture.height;
+        const context = canvas.getContext('2d');
+        const gradient = context.createRadialGradient(x0, y0, r0, x1, y1, r1);
+        colorStops.forEach((stop)=>{
+            gradient.addColorStop(stop.offset, cssColor(stop.color));
+        });
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, renderTexture.width, renderTexture.height);
+        // Store the current render-texture binding.
+        const renderTarget = renderer.renderTexture.current;
+        const sourceFrame = tempSourceFrame.copyFrom(renderer.renderTexture.sourceFrame);
+        const destinationFrame = tempDestinationFrame.copyFrom(renderer.renderTexture.destinationFrame);
+        const renderSprite = new _sprite.Sprite(_core.Texture.from(canvas));
+        renderer.batch.flush();
+        renderer.renderTexture.bind(renderTexture);
+        renderSprite.render(renderer);
+        renderer.batch.flush();
+        renderer.renderTexture.bind(renderTarget, sourceFrame, destinationFrame);
+        return renderTexture;
+    }
+}
+
+},{"@pixi/math":"1qR3C","@pixi/core":"d0INm","@pixi/sprite":"aeiZG","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}]},["1n2s4","1yGwE"], "1yGwE", "parcelRequirea458")
 
 //# sourceMappingURL=index.f25914ac.js.map

@@ -1,10 +1,11 @@
-import { drawScene } from './draw-scene';
+import * as PIXI from 'pixi.js';
 import { drawScenePixi, drawVisibilityTriangles } from './draw-scene-pixi';
 import { loadMap, processSegments } from './load-map';
 import { calculateVisibility } from './visibility';
 import { Rectangle } from './rectangle';
 import { Segment } from './segment';
 import { Point } from './point';
+import { GradientFactory, ColorStop } from '@pixi-essentials/gradients';
 import { Application, Graphics, Container } from 'pixi.js'
 import "../style.scss"
 
@@ -25,12 +26,44 @@ const app = new Application({
 document.body.appendChild(app.view)
 
 
+let texture = PIXI.RenderTexture.create({ width: 512, height: 512 });
+let gradient = GradientFactory.createRadialGradient(
+  app.renderer as PIXI.Renderer,
+  texture,
+  {
+    x0: 256,
+    y0: 256,
+    r0: 0,
+    x1: 256,
+    y1: 256,
+    r1: 256,
+    colorStops: [
+      {
+        offset: 0,
+        color: 0xffffff,
+      },
+      {
+        offset: 0.1,
+        color: 0x222222,
+      },
+      {
+        offset: 1,
+        color: 0x000000,
+      }
+    ]
+  }
+);
+
+
+
+const shapes: Shape[] = [];
 let shape1 = new Shape([
   new Segment(20, 20, 20, 120),
   new Segment(20, 20, 100, 20),
   new Segment(100, 20, 150, 100),
   new Segment(150, 100, 50, 100)
 ]);
+shapes.push(shape1)
 // // Setup scene
 const room = new Rectangle(-10, -10, window.innerWidth + 20, window.innerHeight + 20);
 
@@ -172,6 +205,17 @@ app.stage.addChild(scene);
 let triangles = new Graphics();
 app.stage.addChild(triangles);
 
+let gradient_rect = new PIXI.Graphics();
+app.stage.addChild(gradient_rect);
+gradient_rect.beginTextureFill({ texture: texture, matrix: new PIXI.Matrix().translate(-256, -256) })
+// gradient_rect.drawRect(-0, -0, 512, 512);
+gradient_rect.drawRect(-256, -256, 512, 512);
+gradient_rect.endFill();
+gradient_rect.zIndex = -1
+gradient_rect.scale.set(2.0, 2.0)
+gradient_rect.mask = triangles;
+
+
 drawScenePixi(scene, new Point(50, 50), room, blocks, walls);
 const run = (lightSource: Point) => {
 
@@ -187,6 +231,7 @@ const run = (lightSource: Point) => {
 
 canvas.addEventListener('mousemove', ({ pageX, pageY }) => {
   run(new Point(pageX, pageY));
+  gradient_rect.position.set(pageX, pageY)
 });
 
 window.addEventListener("resize", () => {

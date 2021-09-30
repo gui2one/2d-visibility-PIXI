@@ -24,6 +24,7 @@
     "lint": "tslint --project tsconfig.json"
   },
   "dependencies": {
+    "@pixi-essentials/gradients": "0.0.4",
     "pixi.js": "^6.1.3"
   }
 }

@@ -40,11 +40,11 @@ let gradient = GradientFactory.createRadialGradient(
     colorStops: [
       {
         offset: 0,
-        color: 0xffffff,
+        color: 0xddddaaff,
       },
       {
-        offset: 0.1,
-        color: 0x222222,
+        offset: 0.2,
+        color: 0x33333355,
       },
       {
         offset: 1,
